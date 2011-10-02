@@ -1,0 +1,8 @@
+Enable passing of connected client to the server so
+we can facilitate 2-way comms that aren't just via
+return values.
+Make completion callbacks optional
+Push up everything but conn logic to a common base (to facilitate bi-di comms)
+
+Make a custom serialization protocol so re-serialization of the user-serialized data
+doesn't incur any overhead.
