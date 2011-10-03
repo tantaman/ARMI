@@ -4,6 +4,6 @@ import com.tantaman.armi.CompletionCallback;
 
 
 public interface ServerInterface {
-	String getNameOf(String relation, CompletionCallback<String> cb);
-	long getTime(String locality, CompletionCallback<Long> cb);
+	void getNameOf(String relation, CompletionCallback<String> cb);
+	void getTime(String locality, CompletionCallback<Long> cb);
 }
