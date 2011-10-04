@@ -11,7 +11,7 @@ public class ChatClient implements IChatClient {
 	public ChatClient(String host, int port) {
 		remoteServer = ARMIClient.create(IChatServer.class, IChatClient.class);
 
-		remoteServer.ARMIconnect(host, port, new CompletionCallback<Void>() {
+		remoteServer.connect(host, port, new CompletionCallback<Void>() {
 			@Override
 			public void operationCompleted(Void retVal) {
 				start();
@@ -22,7 +22,7 @@ public class ChatClient implements IChatClient {
 	private void start() {
 		new Thread() {
 			public void run() {
-				remoteServer.ARMIregisterClient(ChatClient.this);
+				remoteServer.registerClient(ChatClient.this);
 				Scanner input = new Scanner(System.in);
 				
 				System.out.print("Username? ");

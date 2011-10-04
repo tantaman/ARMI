@@ -15,7 +15,7 @@ public class ClientApp {
 	public static void main(String[] args) {
 		final IClientEndpoint<ServerInterface, Void> remote = ARMIClient.create(ServerInterface.class, null);
 
-		remote.ARMIconnect("localhost", 2435, new CompletionCallback<Void>() {
+		remote.connect("localhost", 2435, new CompletionCallback<Void>() {
 			@Override
 			public void operationCompleted(Void retVal) {
 				start(remote.getServerMethods());

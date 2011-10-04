@@ -41,7 +41,7 @@ public class ClientEndpoint<S, C> implements IClientEndpoint<S, C> {
 		return serverMethods;
 	}
 
-	public void ARMIconnect(String host, int port, final CompletionCallback<Void> cb) {
+	public void connect(String host, int port, final CompletionCallback<Void> cb) {
 		String sHost = (String)host;
 		int iPort = (Integer)port;
 
@@ -78,12 +78,12 @@ public class ClientEndpoint<S, C> implements IClientEndpoint<S, C> {
 	}
 	
 	@Override
-	public void ARMIregisterClient(C client) {
+	public void registerClient(C client) {
 		clientRegistrations.add(client);
 	}
 	
 	@Override
-	public boolean ARMIshutdown() {
+	public boolean shutdown() {
 		return false;
 	}
 }
