@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import com.tantaman.commons.lang.ObjectUtils;
+
 public class ClientRegistrationWrapper<T> implements InvocationHandler {
 	private final Set<T> registrations;
 	
@@ -12,12 +14,20 @@ public class ClientRegistrationWrapper<T> implements InvocationHandler {
 		registrations = new CopyOnWriteArraySet<T>();
 	}
 	
+	public void add(T client) {
+		registrations.add(client);
+	}
+	
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		// 1. look up the method
-		// 2. invoke the method on each registration
-		return null;
+		System.out.println("GOT CALL TO CLIENT");
+		for (T client : registrations) {
+			method.invoke(client, args);
+		}
+		
+		// TODO: return values from client to server?
+		return ObjectUtils.createNullInstanceOf(method.getReturnType());
 	}
 
 }

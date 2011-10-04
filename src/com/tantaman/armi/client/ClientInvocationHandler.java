@@ -23,8 +23,7 @@ public class ClientInvocationHandler extends ARMInvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args)
 	throws Throwable {
 		if (method.getDeclaringClass() == IClientEndpoint.class) {
-			clientEndpoint.ARMIconnect((String)args[0], (Integer)args[1], (CompletionCallback)args[2]);
-			return null;
+			return method.invoke(clientEndpoint, args);
 		} else {
 			return super.invoke(proxy, method, args);
 		}

@@ -9,15 +9,16 @@ public class ARMIClient {
 	@SuppressWarnings("unchecked")
 	public static <S, C> S create(Class<S> serverInterface, Class<C> clientInterface) {
 		Object clientImpl = null;
+		ClientRegistrationWrapper<C> clientRegistrations = new ClientRegistrationWrapper<C>();
 		if (clientInterface != null) {
 			clientImpl = Proxy.newProxyInstance(
 					Thread.currentThread().getContextClassLoader(),
 					new Class [] {clientInterface},
-					new ClientRegistrationWrapper<C>());
+					clientRegistrations);
 		}
 		
 		ChannelHandler channelHandler = new ChannelHandler(clientImpl);
-		ClientEndpoint endpoint = new ClientEndpoint(channelHandler);
+		ClientEndpoint endpoint = new ClientEndpoint(channelHandler, clientRegistrations);
 		ClientInvocationHandler clientInvokeHandler =  new ClientInvocationHandler(endpoint);
 		channelHandler.setReturnHandler(clientInvokeHandler);
 		

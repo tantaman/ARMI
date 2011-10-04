@@ -15,7 +15,7 @@ import com.tantaman.commons.lang.ObjectUtils;
 // so it can be called from the server
 public abstract class ARMInvocationHandler implements InvocationHandler {
 	private final Map<Long, CompletionCallback<Object>> callbacks;
-	private final AtomicLong currRequestID;
+	protected final AtomicLong currRequestID;
 
 	public ARMInvocationHandler() {
 		callbacks = new ConcurrentHashMap<Long, CompletionCallback<Object>>();
@@ -29,30 +29,33 @@ public abstract class ARMInvocationHandler implements InvocationHandler {
 	throws Throwable {
 		CompletionCallback<Object> cb;
 		Object lastArg =  args[args.length - 1];
+		Request request;
 
 		if (lastArg instanceof CompletionCallback) {
 			cb = (CompletionCallback<Object>)lastArg;
+			request = 
+				new Request(
+						currRequestID.incrementAndGet(),
+						method.getName(),
+						Arrays.copyOfRange(args, 0, args.length - 1),
+						true);
 		} else {
 			cb = null;
+			request = 
+				new Request(
+						currRequestID.incrementAndGet(),
+						method.getName(),
+						args,
+						false);
 		}
-
-		Request request = 
-			new Request(
-					currRequestID.incrementAndGet(),
-					method.getName(),
-					Arrays.copyOfRange(args, 0, args.length - 1),
-					cb != null);
+		
 		if (cb != null) {
 			callbacks.put(request.getId(), cb);
 		}
 
 		getChannel().write(request);
 
-		if (method.getReturnType().isPrimitive()) {
-			return ObjectUtils.createNullInstanceOf(method.getReturnType());
-		}
-
-		return null;
+		return ObjectUtils.createNullInstanceOf(method.getReturnType());
 	}
 
 	public void returnReceived(Return returnData) {
