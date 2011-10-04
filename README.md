@@ -1,6 +1,8 @@
 ARMI - A-synchronous RMI for Java
 =================================
 
+In its very early stages (dev started 10/2/11).  Lacking error handling and full connection life cycle handling.
+
 The interface is dead simple.
 
 **Client Side**
