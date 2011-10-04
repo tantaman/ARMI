@@ -1,4 +1,4 @@
-ARMI - A-synchronous RMI for Java
+ARMI - Asynchronous RMI for Java
 =================================
 
 In its very early stages (dev started 10/2/11).  Lacking error handling and full connection life cycle handling.
