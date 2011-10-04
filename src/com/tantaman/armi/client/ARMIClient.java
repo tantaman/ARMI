@@ -5,7 +5,11 @@ import java.lang.reflect.Proxy;
 import com.tantaman.armi.ChannelHandler;
 
 public class ARMIClient {	
-	// TODO: allow client interface to be passed here for solid type checking?
+
+	public static <S> IClientEndpoint<S, Void> create(Class<S> serverInterface) {
+		return create(serverInterface, null);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <S, C> IClientEndpoint<S, C> create(Class<S> serverInterface, Class<C> clientInterface) {
 		Object clientImpl = null;
