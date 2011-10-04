@@ -3,13 +3,15 @@ ARMI - A-synchronous RMI for Java
 
 The interface is dead simple.
 
-**Client Side***
+**Client Side**
 
     client = ARMIClient.create(ServerInterface.class);
     client.connect(host, port, new CompletionCallback<Void>() {
 			@Override
 			public void operationCompleted(Void retVal) {
-				client.getServerMethods().someServerMethod(param1, param2, ...);
+			    ServerInterface remoteServ = client.getServerMethods();
+			    remoteServ.doSomething(param1, param2, ...);
+			    remoteServ.doSomethingElse();
 			}
 	});
 
@@ -22,7 +24,7 @@ Servers can call their clients:
 
     server.getClientMethods().someClientMethod(params...);
 
-Clients can be called back when server methods return:
+Clients can be called back when server methods return by providing a callback as the last parameter:
 
     ServerInterface serverMethods = client.getServerMethods();
     serverMethods.someMethod(params..., new CompletionCallback<Type>() {
