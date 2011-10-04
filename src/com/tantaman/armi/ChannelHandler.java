@@ -18,21 +18,24 @@ public class ChannelHandler extends SimpleChannelUpstreamHandler {
 	 * Shouldn't we make a callback or return handler class for that?  InvocationHandler
 	 * doing it seems odd.
 	 */
-	private final ARMInvocationHandler invocationHandler;
+	private volatile ARMInvocationHandler returnHandler;
 	
 	// TODO: do an initial handshake where we get the interface being
 	// used by the client and set up method ids?
-	public ChannelHandler(Object delegate, ARMInvocationHandler invocationHandler) {
+	public ChannelHandler(Object delegate) {
 		this.delegate = delegate;
-		this.invocationHandler = invocationHandler;
+	}
+	
+	public void setReturnHandler(ARMInvocationHandler returnHandler) {
+		this.returnHandler = returnHandler;
 	}
 	
 	@Override
 	public void messageReceived(final ChannelHandlerContext ctx, MessageEvent e)
 			throws Exception {
-		if (e.getMessage() instanceof Request) {
+		if (delegate != null && e.getMessage() instanceof Request) {
 			handleMethodCall(ctx, e);
-		} else {
+		} else if (e.getMessage() instanceof Return) {
 			handleMethodReturn(ctx, e);
 		}
 	}
@@ -66,6 +69,6 @@ public class ChannelHandler extends SimpleChannelUpstreamHandler {
 	}
 	
 	private void handleMethodReturn(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
-		invocationHandler.returnReceived((Return)e.getMessage());
+		returnHandler.returnReceived((Return)e.getMessage());
 	}
 }

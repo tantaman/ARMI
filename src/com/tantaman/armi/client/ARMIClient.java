@@ -2,21 +2,29 @@ package com.tantaman.armi.client;
 
 import java.lang.reflect.Proxy;
 
-import com.tantaman.armi.ARMInvocationHandler;
+import com.tantaman.armi.ChannelHandler;
 
 public class ARMIClient {	
 	// TODO: allow client interface to be passed here for solid type checking?
 	@SuppressWarnings("unchecked")
-	public static <T> T create(Class<T> serverInterface, Class<T> clientInterface) {
-		Object clientDelegate = null;
+	public static <S, C> S create(Class<S> serverInterface, Class<C> clientInterface) {
+		Object clientImpl = null;
 		if (clientInterface != null) {
-			clientDelegate = Proxy.newProxyInstance(
+			clientImpl = Proxy.newProxyInstance(
 					Thread.currentThread().getContextClassLoader(),
 					new Class [] {clientInterface},
-					new ClientRegistrationWrapper());
+					new ClientRegistrationWrapper<C>());
 		}
-		return (T)Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-				new Class [] {serverInterface, ClientEndpoint.class},
-				new ARMInvocationHandler(clientDelegate));
+		
+		ChannelHandler channelHandler = new ChannelHandler(clientImpl);
+		ClientEndpoint endpoint = new ClientEndpoint(channelHandler);
+		ClientInvocationHandler clientInvokeHandler =  new ClientInvocationHandler(endpoint);
+		channelHandler.setReturnHandler(clientInvokeHandler);
+		
+		S remoteServer = (S)Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+				new Class [] {serverInterface, IClientEndpoint.class},
+				clientInvokeHandler);
+		
+		return remoteServer;
 	}
 }

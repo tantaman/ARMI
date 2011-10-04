@@ -1,10 +1,10 @@
-package com.tantaman.armi.examples;
+package com.tantaman.armi.examples.req_resp;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.tantaman.armi.CompletionCallback;
 import com.tantaman.armi.client.ARMIClient;
-import com.tantaman.armi.client.ClientEndpoint;
+import com.tantaman.armi.client.IClientEndpoint;
 
 public class ClientApp {
 	private static final AtomicLong numReturns = new AtomicLong(0);
@@ -15,7 +15,7 @@ public class ClientApp {
 	public static void main(String[] args) {
 		final ServerInterface remote = ARMIClient.create(ServerInterface.class, null);
 
-		((ClientEndpoint)remote).ARMIconnect("localhost", 2435, new CompletionCallback<Void>() {
+		((IClientEndpoint)remote).ARMIconnect("localhost", 2435, new CompletionCallback<Void>() {
 			@Override
 			public void operationCompleted(Void retVal) {
 				start(remote);

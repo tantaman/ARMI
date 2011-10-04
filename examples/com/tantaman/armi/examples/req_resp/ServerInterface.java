@@ -1,4 +1,4 @@
-package com.tantaman.armi.examples;
+package com.tantaman.armi.examples.req_resp;
 
 import com.tantaman.armi.CompletionCallback;
 
