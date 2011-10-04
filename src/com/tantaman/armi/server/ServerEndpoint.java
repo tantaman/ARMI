@@ -13,15 +13,17 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 
-public class ServerEndpoint implements IServerEndpoint {
+public class ServerEndpoint<T> implements IServerEndpoint<T> {
 	private final ServerChannelHandler channelHandler;
 	private volatile Channel channel;
+	private volatile T clientMethods;
+	
 	public ServerEndpoint(ServerChannelHandler channelHandler) {
 		this.channelHandler = channelHandler;
 	}
 	
 	@Override
-	public void ARMIlisten(String host, int port) {
+	public void listen(String host, int port) {
 		ServerBootstrap bootstrap = new ServerBootstrap(
 				new NioServerSocketChannelFactory(
 						Executors.newCachedThreadPool(),
@@ -41,8 +43,16 @@ public class ServerEndpoint implements IServerEndpoint {
 		channel = bootstrap.bind(new InetSocketAddress((String)host, (Integer)port));
 	}
 
+	protected void setClientMethods(T clientMethods) {
+		this.clientMethods = clientMethods;
+	}
+	
+	public T getClientMethods() {
+		return clientMethods;
+	}
+	
 	@Override
-	public void ARMIshutdown() {
+	public void shutdown() {
 		channel.close();
 	}
 	
@@ -53,5 +63,4 @@ public class ServerEndpoint implements IServerEndpoint {
 	public Set<Channel> getChannels() {
 		return channelHandler.getChannels();
 	}
-
 }

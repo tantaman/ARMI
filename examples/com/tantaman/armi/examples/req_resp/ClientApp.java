@@ -10,15 +10,15 @@ public class ClientApp {
 	private static final AtomicLong numReturns = new AtomicLong(0);
 	private static final int NUM_CALLS = 20000;
 	private static int iters;
-	private static final int NUM_ITERS = 1000;
+	private static final int NUM_ITERS = 100;
 	
 	public static void main(String[] args) {
-		final ServerInterface remote = ARMIClient.create(ServerInterface.class, null);
+		final IClientEndpoint<ServerInterface, Void> remote = ARMIClient.create(ServerInterface.class, null);
 
-		((IClientEndpoint)remote).ARMIconnect("localhost", 2435, new CompletionCallback<Void>() {
+		remote.ARMIconnect("localhost", 2435, new CompletionCallback<Void>() {
 			@Override
 			public void operationCompleted(Void retVal) {
-				start(remote);
+				start(remote.getServerMethods());
 			}
 		});
 	}
@@ -26,9 +26,9 @@ public class ClientApp {
 	private static void start(final ServerInterface remote) {
 		final long startTime = System.currentTimeMillis();
 		for (int i = 0; i < NUM_CALLS; ++i) {
-			remote.getTime("NY", new CompletionCallback<Long>() {
+			remote.getTime("NY", new CompletionCallback<String>() {
 				@Override
-				public void operationCompleted(Long retVal) {
+				public void operationCompleted(String retVal) {
 					long returns = numReturns.incrementAndGet();
 					if (returns % NUM_CALLS == 0) {
 						long endTime = System.currentTimeMillis();

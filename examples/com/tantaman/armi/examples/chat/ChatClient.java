@@ -7,56 +7,38 @@ import com.tantaman.armi.client.ARMIClient;
 import com.tantaman.armi.client.IClientEndpoint;
 
 public class ChatClient implements IChatClient {
-	public static void main(String[] args) {
-		String host;
-		int port;
-		if (args.length == 0) {
-			host = "localhost";
-			port = 2345;
-		} else {
-			host = args[0];
-			port = Integer.parseInt(args[1]);
-		}
-		
-		
-		new ChatClient(host, port);
-	}
-	
-	private final IChatServer remoteServer;
-	private String username;
-	
+	private final IClientEndpoint<IChatServer, IChatClient> remoteServer;
 	public ChatClient(String host, int port) {
 		remoteServer = ARMIClient.create(IChatServer.class, IChatClient.class);
-		((IClientEndpoint<IChatClient>)remoteServer).ARMIconnect(host, port, new CompletionCallback<Void>() {
+
+		remoteServer.ARMIconnect(host, port, new CompletionCallback<Void>() {
 			@Override
 			public void operationCompleted(Void retVal) {
-				startMainLoop();
+				start();
 			}
 		});
 	}
 	
-	private void startMainLoop() {
-		((IClientEndpoint<IChatClient>)remoteServer).ARMIregisterClient(this);
-		Scanner input = new Scanner(System.in);
-		
-		System.out.println("Your username? ");
-		username = input.nextLine();
-		
-		while (input.hasNext()) {
-			String text = input.nextLine();
-			ChatMessage message = new ChatMessage(username, text);
-			remoteServer.newMessage(message, new CompletionCallback<String>() {
-				@Override
-				public void operationCompleted(String retVal) {
-					System.out.println(retVal);
-				}
-			});
-		}
+	private void start() {
+		new Thread() {
+			public void run() {
+				remoteServer.ARMIregisterClient(ChatClient.this);
+				Scanner input = new Scanner(System.in);
+				
+				System.out.print("Username? ");
+				String username = input.nextLine();
+				
+				do {
+					System.out.print("> ");
+					String text = input.nextLine();
+					remoteServer.getServerMethods().messageReceived(new ChatMessage(username, text));
+				} while (true);
+			}
+		}.start();
 	}
 	
-	public void newMessage(ChatMessage message) {
-		// filter out messages from ourselves (should handle this at the server, but this is a simple demo)
-//		if (!message.getUsername().equals(username))
-			System.out.println(message);
+	@Override
+	public void messageReceived(ChatMessage message) {
+		System.out.println(message);
 	}
 }

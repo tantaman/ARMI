@@ -4,8 +4,8 @@ import com.tantaman.armi.CompletionCallback;
 
 public class Server implements ServerInterface {
 		@Override
-		public void getTime(String locality, CompletionCallback<Long> cb) {
-			cb.operationCompleted(11L);
+		public void getTime(String locality, CompletionCallback<String> cb) {
+			cb.operationCompleted("COMPL");
 		}
 		
 		@Override

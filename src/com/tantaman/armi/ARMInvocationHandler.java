@@ -61,6 +61,6 @@ public abstract class ARMInvocationHandler implements InvocationHandler {
 	public void returnReceived(Return returnData) {
 		long id = returnData.getId();
 		CompletionCallback<Object> cb = callbacks.remove(id);
-		cb.operationCompleted(returnData.decodeReturnVal());
+		cb.operationCompleted(returnData.getReturnVal());
 	}
 }

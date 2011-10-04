@@ -5,7 +5,7 @@ import com.tantaman.armi.server.IServerEndpoint;
 
 public class ServerApp {
 	public static void main(String[] args) {
-		IServerEndpoint server = ARMIServer.create(new Server());
-		server.ARMIlisten("localhost", 2435);
+		IServerEndpoint<?> server = ARMIServer.create(new Server());
+		server.listen("localhost", 2435);
 	}
 }

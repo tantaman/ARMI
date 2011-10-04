@@ -9,9 +9,9 @@ import com.tantaman.armi.Request;
 import com.tantaman.commons.lang.ObjectUtils;
 
 public class ServerInvocationHandler extends ARMInvocationHandler {
-	private final ServerEndpoint serverEndpoint;
+	private final ServerEndpoint<?> serverEndpoint;
 	
-	public ServerInvocationHandler(ServerEndpoint serverEndpoint) {
+	public ServerInvocationHandler(ServerEndpoint<?> serverEndpoint) {
 		super();
 		this.serverEndpoint = serverEndpoint; 
 	}
@@ -25,7 +25,7 @@ public class ServerInvocationHandler extends ARMInvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		if (method.getDeclaringClass() == IServerEndpoint.class) {
-			serverEndpoint.ARMIlisten((String)args[0], (Integer)args[1]);
+			serverEndpoint.listen((String)args[0], (Integer)args[1]);
 			return null;
 		} else {
 			Request request;
@@ -37,7 +37,6 @@ public class ServerInvocationHandler extends ARMInvocationHandler {
 						false);
 			
 			for (Channel channel : serverEndpoint.getChannels()) {
-				System.out.println("SERVER WRITING TO CHANNEL " + request);
 				channel.write(request);
 			}
 			

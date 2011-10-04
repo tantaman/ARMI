@@ -5,22 +5,24 @@ import java.lang.reflect.Proxy;
 
 public class ARMIServer {
 	@SuppressWarnings("unchecked")
-	public static <C> C create(Object serverImpl, Class<C> clientInterface) {
+	public static <C> IServerEndpoint<C> create(Object serverImpl, Class<C> clientInterface) {
 		Object remoteClient = null;
 		ServerChannelHandler channelHandler = new ServerChannelHandler(serverImpl);
-		ServerEndpoint serverEndpoint = new ServerEndpoint(channelHandler);
+		ServerEndpoint<C> serverEndpoint = new ServerEndpoint<C>(channelHandler);
 		ServerInvocationHandler invokeHandler = new ServerInvocationHandler(serverEndpoint);
 		channelHandler.setReturnHandler(invokeHandler);
 		
 		remoteClient = Proxy.newProxyInstance(
-				Thread.currentThread().getContextClassLoader(),
-				new Class [] {clientInterface, IServerEndpoint.class},
+				ARMIServer.class.getClassLoader(),
+				new Class [] {clientInterface},
 				invokeHandler);
+		
+		serverEndpoint.setClientMethods((C)remoteClient);
 
-		return (C)remoteClient;
+		return serverEndpoint;
 	}
 	
-	public static IServerEndpoint create(Object serverImpl) {
-		return new ServerEndpoint(new ServerChannelHandler(serverImpl));
+	public static IServerEndpoint<?> create(Object serverImpl) {
+		return new ServerEndpoint<Void>(new ServerChannelHandler(serverImpl));
 	}
 }

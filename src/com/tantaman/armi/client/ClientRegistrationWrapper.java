@@ -21,7 +21,6 @@ public class ClientRegistrationWrapper<T> implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		System.out.println("GOT CALL TO CLIENT");
 		for (T client : registrations) {
 			method.invoke(client, args);
 		}
@@ -29,5 +28,4 @@ public class ClientRegistrationWrapper<T> implements InvocationHandler {
 		// TODO: return values from client to server?
 		return ObjectUtils.createNullInstanceOf(method.getReturnType());
 	}
-
 }

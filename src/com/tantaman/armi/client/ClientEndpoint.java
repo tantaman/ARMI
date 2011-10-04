@@ -17,18 +17,28 @@ import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 
 import com.tantaman.armi.CompletionCallback;
 
-public class ClientEndpoint<T> implements IClientEndpoint<T> {
+public class ClientEndpoint<S, C> implements IClientEndpoint<S, C> {
 	private final ChannelUpstreamHandler channelHandler;
-	private final ClientRegistrationWrapper<T> clientRegistrations;
+	private final ClientRegistrationWrapper<C> clientRegistrations;
 	private volatile Channel channel;
+	private volatile S serverMethods;
 	
-	public ClientEndpoint(ChannelUpstreamHandler channelHandler, ClientRegistrationWrapper<T> clientRegistrations) {
+	public ClientEndpoint(ChannelUpstreamHandler channelHandler, ClientRegistrationWrapper<C> clientRegistrations) {
 		this.channelHandler = channelHandler;
 		this.clientRegistrations = clientRegistrations;
 	}
 	
 	public Channel getChannel() {
 		return channel;
+	}
+	
+	protected void setServerMethods(S serverMethods) {
+		this.serverMethods = serverMethods;
+	}
+	
+	@Override
+	public S getServerMethods() {
+		return serverMethods;
 	}
 
 	public void ARMIconnect(String host, int port, final CompletionCallback<Void> cb) {
@@ -68,7 +78,7 @@ public class ClientEndpoint<T> implements IClientEndpoint<T> {
 	}
 	
 	@Override
-	public void ARMIregisterClient(T client) {
+	public void ARMIregisterClient(C client) {
 		clientRegistrations.add(client);
 	}
 	
