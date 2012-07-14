@@ -1,9 +1,11 @@
 ARMI - Asynchronous RMI for Java
 =================================
 
-So far this project is mostly a learning experience.  It lacks error handling and full connection life cycle handling.
+*So far this project is mostly a learning experience.  It lacks error handling and full connection life cycle handling.*
 
-The interface is dead simple.
+##Intro##
+
+The great thing about ARMI is that the interface is dead simple.
 
 **Client Side**
 
